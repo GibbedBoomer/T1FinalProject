@@ -1,24 +1,16 @@
 import { Toolbox } from "./toolbox.js";
+import { Game } from "./game.js";
+import { GameOver } from "./gameOver.js";
+import { Title } from "./title.js";
 
 let canvas = document.getElementById("myCanvas");
 let pencil = canvas.getContext("2d"); // This gives you the drawing context, like a pencil
 let toolbox = new Toolbox();
 
-// let myFavoriteLetters = ["a", "b", "c"];
-console.log(toolbox.getRandomColor());
+//make states
+let game = new Game();
+let gameOver = new GameOver();
+let title = new Title();
 
-pencil.fillStyle = toolbox.getRandomColor();
-pencil.fillRect(50, 50, 100, 100);
-
-// let counts = [0,0,0];
-// for(let i = 0; i < 100; i++) {
-// //     let randomIndex = getRandomIndex(myFavoriteLetters);
-// //     counts[randomIndex] += 1;
-
-//     console.log(toolbox.getRandomItem(myFavoriteLetters));
-// }
-
-
-// let shuffled = toolbox.shuffleArray(myFavoriteLetters);
-// console.log(shuffled);
+let state = title;
 
