@@ -4,57 +4,54 @@ export class Title {
 
     canvas;
     pencil;
-    ChangeToGame = false;
+    changeToGame = false;
     toolbox = new Toolbox();
+    titleScreen = document.getElementById("title_screen");
+    PressAny = document.getElementById("blinkingPressAnyKey");
+
+    pressAnyTimerStarted = false;
+    pressAnyVisible = false;
 
     constructor(canvas, pencil) {
         this.canvas = canvas;
         this.pencil = pencil;
 
-        //function binding, set this to be this this forever for this
-        //this ;)
-        this.onKeyPressed = this.onKeyPressed.bind(this)
-        this.onClicked = this.onClicked.bind(this)
-
-        document.addEventListener("keypress", this.onKeyPressed)
-        document.addEventListener("click", this.onClicked)
+        this.onKeyPressed = this.onKeyPressed.bind(this);
+        document.addEventListener("keypress", this.onKeyPressed);
     }
 
     onKeyPressed() {
         this.changeToGame = true;
     }
 
-    startButtonX = 200
-    startButtonY = 200
-    startButtonWidth = 100
-    startButtonHeight = 50
-    
-    isHitButton= false;
-
-    onClicked(event) {
-        console.log(event);
-        let pointX = event.offsetX
-        let pointY = event.offsetY
-        this.isHitButton = this.toolbox.isWithinRect(pointX, pointY, 
-            this.startButtonX, this.startButtonY, 
-            this.startButtonWidth, this.startButtonHeight
-        );
-        this.changeToGame = this.isHitButton
-    }
-
     update() {
-        this.pencil.fillStyle = "gray";
-        this.pencil.font = "20px Georgia";
-        this.pencil.fillText("Title", 10, 50);
+        this.pencil.drawImage(
+            this.titleScreen,
+            0,
+            0
+        );
 
-        this.pencil.fillStyle = "pink";
-        this.pencil.fillRect(this.startButtonX, this.startButtonY, this.startButtonWidth, this.startButtonHeight);
-        if(this.changeToGame) {
-            this.changeToGame = "false"
+  
+        if (!this.pressAnyTimerStarted) {
+            this.pressAnyTimerStarted = true;
+            setTimeout(() => {
+                this.pressAnyVisible = true;
+            }, 3000);
+        }
+
+        if (this.pressAnyVisible) {
+            this.pencil.drawImage(
+                this.PressAny,
+                this.canvas.width / 2 - this.PressAny.naturalWidth / 2,
+                400
+            );
+        }
+
+        if (this.changeToGame) {
+            this.changeToGame = "false";
             return "game";
         }
-        //return "gameOver";
-    }
 
+    }
 
 }
