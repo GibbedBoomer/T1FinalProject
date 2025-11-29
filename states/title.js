@@ -49,7 +49,7 @@ export class Title {
 
         if (this.changeToGame) {
             this.changeToGame = "false";
-            return "game";
+            return "level1";
         }
 
     }

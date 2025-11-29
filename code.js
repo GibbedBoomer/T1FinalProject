@@ -1,4 +1,4 @@
-import { Game } from "./states/game.js";
+import { Level1 } from "./states/level1.js";
 import { GameOver } from "./states/gameOver.js";
 import { Title } from "./states/title.js";
 import { Toolbox } from "./toolbox.js";
@@ -8,7 +8,7 @@ let pencil = canvas.getContext("2d"); // This gives you the drawing context, lik
 let toolbox = new Toolbox();
 
 //make some states to go to.
-let game = new Game(canvas, pencil);
+let level1 = new Level1(canvas, pencil);
 let gameOver = new GameOver(canvas, pencil);
 let title = new Title(canvas, pencil);
 
@@ -26,8 +26,8 @@ function gameLoop() {
     if(command == "gameOver") {
         state = gameOver;
     }
-    if(command == "game") {
-        state = game;
+    if(command == "level1") {
+        state = level1;
     }
 
 }
