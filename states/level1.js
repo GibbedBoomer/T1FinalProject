@@ -1,7 +1,8 @@
 import { Toolbox } from "../toolbox.js";
+import { Missile } from "../missile.js";
 
 export class Level1 {
-
+    //setting up variables
     canvas;
     pencil;
     toolbox = new Toolbox();
@@ -14,16 +15,14 @@ export class Level1 {
         this.canvas = canvas;
         this.pencil = pencil;
 
-        // -------------------------
-        // PLAYER SHIP
-        // -------------------------
+        // ship object
         this.playerShip = {
             x: 50,
             y: 50,
             width: 100,
             height: 100,
             speed: 5,
-
+        //controls
             upKey: "w",
             downKey: "s",
             leftKey: "a",
@@ -31,7 +30,7 @@ export class Level1 {
 
             sprite: this.playerShipSprite,
             pencil: pencil,
-
+        //ship draw
             draw: () => {
                 pencil.drawImage(
                     this.playerShip.sprite,
@@ -41,7 +40,7 @@ export class Level1 {
                     this.playerShip.height
                 );
             },
-
+        //ship move function
             move: () => {
                 let keys = this.keysPressed;
                 let ship = this.playerShip;
@@ -53,24 +52,24 @@ export class Level1 {
             }
         };
 
-        // -------------------------
-        // LASER
-        // -------------------------
+        //laser object
         this.laser = {
             x: this.playerShip.x + this.playerShip.width,
             y: this.playerShip.y + this.playerShip.height / 2,
             width: 20,
             height: 10,
             speed: 10,
+            //is the laser active variable
             active: false,
 
             sprite: this.laserSprite,
             pencil: pencil,
+        //only draw laser if its set to be active
         draw: () => {
             if (!this.laser.active) return;
             this.pencil.drawImage(this.laser.sprite, this.laser.x, this.laser.y, this.laser.width, this.laser.height);
         },
-
+            //function only happens if laser is active, moves laser based on its speed and deactivates it when it clears the screen
             move: () => {
                 if (!this.laser.active) return;
                 this.laser.x += this.laser.speed;
@@ -79,7 +78,7 @@ export class Level1 {
                     this.laser.active = false;
                 }
             },
-
+            //function that starts the laser shooting, sets laser to be active and assigns the laser position to start from the ship
             fire: () => {
                 if (!this.laser.active) {
                     this.laser.active = true;
@@ -102,7 +101,7 @@ export class Level1 {
             this.keysPressed[e.key] = false;
         });
     }
-
+    //Level 1 Update loop
     update() {
         this.playerShip.move();
         this.playerShip.draw();
