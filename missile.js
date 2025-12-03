@@ -1,15 +1,17 @@
 export class Missile{
-    x = 1200;
+    x = 1300;
     y = 50;
     speed = 5;
     missileSprite = document.getElementById("missile")
     height = 100;
     width = 100;
     pencil;
+    canvas;
 
-    constructor(canvas, pencil) {
+    constructor(canvas, pencil, speed) {
         this.pencil = pencil;
         this.canvas = canvas;
+        this.speed = speed;
         this.y = Math.random() * this.canvas.height;
     }
 
@@ -25,6 +27,6 @@ export class Missile{
     }
 
     move(){
-        this.x += this.speed;
+        this.x -= this.speed;
     }
 }

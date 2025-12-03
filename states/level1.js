@@ -10,10 +10,15 @@ export class Level1 {
 
     playerShipSprite = document.getElementById("playerShip");
     laserSprite = document.getElementById("laserSprite");
-
+    
+    //missileCount basically sets level difficulty along with speed passed in spawn function
+    missileCount = 20;
+    missiles = [];
     constructor(canvas, pencil) {
         this.canvas = canvas;
         this.pencil = pencil;
+
+     
 
         // ship object
         this.playerShip = {
@@ -58,7 +63,7 @@ export class Level1 {
             y: this.playerShip.y + this.playerShip.height / 2,
             width: 20,
             height: 10,
-            speed: 10,
+            speed: 25,
             //is the laser active variable
             active: false,
 
@@ -100,7 +105,27 @@ export class Level1 {
         window.addEventListener("keyup", e => {
             this.keysPressed[e.key] = false;
         });
+        
+        //starts missile spawning below once
+        this.spawnMissileInterval(this.missileCount, 5000)
     }
+
+    //missileSpawns function
+        spawnMissileInterval(missileCount, intervalMilliseconds) {
+            let currentCount = 0;
+
+            const intervalId = setInterval(() => {
+                if (currentCount < missileCount) {
+                    const newMissile = new Missile(this.canvas, this.pencil, 5);
+                    this.missiles.push(newMissile);
+                    currentCount++;
+                } else {
+                    clearInterval(intervalId); // Stop the interval when all items are spawned
+                    console.log('All missiles spawned.');
+                }
+            }, intervalMilliseconds);
+        }
+
     //Level 1 Update loop
     update() {
         this.playerShip.move();
@@ -108,5 +133,13 @@ export class Level1 {
 
         this.laser.move();
         this.laser.draw();
-    }
+
+        
+        // Update missiles
+        this.missiles.forEach(m => {
+            m.move();
+            m.draw();
+            m.check();
+        });
+    }   
 }
