@@ -69,11 +69,11 @@ export class Level1 {
 
             sprite: this.laserSprite,
             pencil: pencil,
-        //only draw laser if its set to be active
-        draw: () => {
-            if (!this.laser.active) return;
-            this.pencil.drawImage(this.laser.sprite, this.laser.x, this.laser.y, this.laser.width, this.laser.height);
-        },
+            //only draw laser if its set to be active
+            draw: () => {
+                if (!this.laser.active) return;
+                this.pencil.drawImage(this.laser.sprite, this.laser.x, this.laser.y, this.laser.width, this.laser.height);
+            },
             //function only happens if laser is active, moves laser based on its speed and deactivates it when it clears the screen
             move: () => {
                 if (!this.laser.active) return;
@@ -106,10 +106,20 @@ export class Level1 {
             this.keysPressed[e.key] = false;
         });
         
+        
         //starts missile spawning below once
         this.spawnMissileInterval(this.missileCount, 5000)
     }
-
+    
+    //check laser and missile colliding function
+    checkLaserMissileCollision(laser, missile) {
+        return (
+            laser.x < missile.x + missile.width &&
+            laser.x + laser.width > missile.x &&
+            laser.y < missile.y + missile.height &&
+            laser.y + laser.height > missile.y
+        );
+    }
     //missileSpawns function
         spawnMissileInterval(missileCount, intervalMilliseconds) {
             let currentCount = 0;
