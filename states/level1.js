@@ -12,7 +12,7 @@ export class Level1 {
     laserSprite = document.getElementById("laserSprite");
     
     //missileCount basically sets level difficulty along with speed passed in spawn function
-    missileCount = 20;
+    missileCount = 5;
     missiles = [];
     constructor(canvas, pencil) {
         this.canvas = canvas;
@@ -150,6 +150,13 @@ export class Level1 {
             m.move();
             m.draw();
             m.check();
+            if (this.checkLaserMissileCollision(this.laser, m)) {
+                console.log("missile hit!")
+                m.explode();
+            }
         });
+        
+        this.missiles = this.missiles.filter(m => m.isLive);
+        
     }   
 }
