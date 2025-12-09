@@ -1,9 +1,6 @@
 export class Missile {
-    x = 1300;
-    y = 50;
-    speed = 5;
-    height = 100;
     width = 100;
+    height = 100;
 
     missileSprite = document.getElementById("missile");
     explosionSprite = document.getElementById("explosion");
@@ -15,45 +12,39 @@ export class Missile {
         this.canvas = canvas;
         this.pencil = pencil;
         this.speed = speed;
-        this.y = Math.random() * this.canvas.height;
+
+        // Spawn off screen right
+        this.x = this.canvas.width + 100;
+
+        // Random Y
+        this.y = Math.random() * (this.canvas.height - this.height);
     }
 
     move() {
-        if (this.exploding) return;  // Stop moving when exploding
+        if (this.exploding) return;
         this.x -= this.speed;
     }
 
-    check(){ 
-        //check for miss 
-        if (this.x < 0){ console.log("Missile Missed") } 
+    check() {
+        if (!this.isLive) return false;
+
+        if (this.x + this.width < 0) {
+            return true;
+        }
+
+        return false;
     }
 
     draw() {
         if (this.exploding) {
-            this.pencil.drawImage(
-                this.explosionSprite,
-                this.x,
-                this.y,
-                this.width,
-                this.height
-            );
+            this.pencil.drawImage(this.explosionSprite, this.x, this.y, this.width, this.height);
         } else {
-            this.pencil.drawImage(
-                this.missileSprite,
-                this.x,
-                this.y,
-                this.width,
-                this.height
-            );
+            this.pencil.drawImage(this.missileSprite, this.x, this.y, this.width, this.height);
         }
     }
 
     explode() {
         this.exploding = true;
-
-        // Remove missile after explosion is finished
-        setTimeout(() => {
-            this.isLive = false;
-        }, 500);
+        setTimeout(() => (this.isLive = false), 500);
     }
 }

@@ -10,15 +10,17 @@ export class Level1 {
 
     playerShipSprite = document.getElementById("playerShip");
     laserSprite = document.getElementById("laserSprite");
+    lifeCounter = document.getElementById("lifeCounter")
+    lifeShip = document.getElementById("lifeShip")
     
     //missileCount basically sets level difficulty along with speed passed in spawn function
     missileCount = 5;
     missiles = [];
+
+    
     constructor(canvas, pencil) {
         this.canvas = canvas;
         this.pencil = pencil;
-
-     
 
         // ship object
         this.playerShip = {
@@ -67,9 +69,10 @@ export class Level1 {
             //is the laser active variable
             active: false,
 
+            //bind sprite and pencil
             sprite: this.laserSprite,
             pencil: pencil,
-            //only draw laser if its set to be active
+            //only draw laser if its active
             draw: () => {
                 if (!this.laser.active) return;
                 this.pencil.drawImage(this.laser.sprite, this.laser.x, this.laser.y, this.laser.width, this.laser.height);
@@ -107,7 +110,7 @@ export class Level1 {
         });
         
         
-        //starts missile spawning below once
+        //starts missile spawning below once cause in constructor
         this.spawnMissileInterval(this.missileCount, 5000)
     }
     
@@ -135,28 +138,55 @@ export class Level1 {
                 }
             }, intervalMilliseconds);
         }
+    //Lives system
+    playerLives = 3;
+    displayLives(){
+        this.pencil.drawImage(this.lifeCounter, 10, 10, 229, 79)
+        if (this.playerLives == 3){
+            this.pencil.drawImage(this.lifeShip, 85, 35, 30, 40)
+            this.pencil.drawImage(this.lifeShip, 135, 35, 30, 40)
+            this.pencil.drawImage(this.lifeShip, 185, 35, 30, 40)
+        } else if (this.playerLives == 2){
+            this.pencil.drawImage(this.lifeShip, 85, 35, 30, 40)
+            this.pencil.drawImage(this.lifeShip, 135, 35, 30, 40)
+        } else if (this.playerLives == 1){
+            this.pencil.drawImage(this.lifeShip, 85, 35, 30, 40)
+        }
+        
+    }
 
     //Level 1 Update loop
     update() {
+        //Update ship
         this.playerShip.move();
         this.playerShip.draw();
 
+        //Update lasers
         this.laser.move();
         this.laser.draw();
 
+        //Update life counter
+        this.displayLives();
         
         // Update missiles
         this.missiles.forEach(m => {
             m.move();
             m.draw();
-            m.check();
+            if (m.check() == true){
+                this.playerLives --;
+                m.isLive = false;
+            }
             if (this.checkLaserMissileCollision(this.laser, m)) {
                 console.log("missile hit!")
                 m.explode();
             }
         });
-        
+
         this.missiles = this.missiles.filter(m => m.isLive);
+
+        if (this.playerLives == 0){
+            return "gameOver";
+        }
         
     }   
 }
