@@ -140,6 +140,15 @@ export class Level1 {
         }
     //Lives system
     playerLives = 3;
+    //Invincibility Frames on Miss or Hit
+    iFrame = false;
+    iFrameTimer = 0;
+    iFrameDuration = 2000;
+    //IFrame start
+    startIFrame(){
+        this.iFrame = true;
+        this.iFrameTimer = this.iFrameDuration
+    }
     displayLives(){
         this.pencil.drawImage(this.lifeCounter, 10, 10, 229, 79)
         if (this.playerLives == 3){
@@ -159,7 +168,22 @@ export class Level1 {
     update() {
         //Update ship
         this.playerShip.move();
-        this.playerShip.draw();
+        //Draw also handles i frame to create blink effect
+        // Handle invincibility frames
+        if (this.iFrame) {
+            this.iFrameTimer -= 16; // ~16ms per frame (60fps)
+
+        // Blink the ship visually if iFrame
+            if (Math.floor(this.iFrameTimer / 100) % 2 === 0) {
+                this.playerShip.draw();
+            }
+
+            if (this.iFrameTimer <= 0) {
+                this.iFrame = false;
+            }
+        } else {
+            this.playerShip.draw();
+        }
 
         //Update lasers
         this.laser.move();
@@ -172,9 +196,12 @@ export class Level1 {
         this.missiles.forEach(m => {
             m.move();
             m.draw();
-            if (m.check() == true){
+            if (m.check()){
+                if (!this.iFrame){
                 this.playerLives --;
-                m.isLive = false;
+                this.startIFrame();
+                }
+                m.isLive = false
             }
             if (this.checkLaserMissileCollision(this.laser, m)) {
                 console.log("missile hit!")
@@ -182,11 +209,12 @@ export class Level1 {
             }
         });
 
+        //filter disabled missiles
         this.missiles = this.missiles.filter(m => m.isLive);
 
+        //return to gameOver state if 0 lives remaining
         if (this.playerLives == 0){
-            return "gameOver";
+            return "gameOver"
         }
-        
     }   
 }
