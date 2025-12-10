@@ -14,7 +14,7 @@ export class Level1 {
     lifeShip = document.getElementById("lifeShip")
     
     //missileCount basically sets level difficulty along with speed passed in spawn function
-    missileCount = 5;
+    missileCount = 10;
     missiles = [];
 
     
@@ -29,15 +29,23 @@ export class Level1 {
             width: 100,
             height: 100,
             speed: 5,
-        //controls
+            //controls
             upKey: "w",
             downKey: "s",
             leftKey: "a",
             rightKey: "d",
+            
+            //dash key
+            dashKey: "Shift",
+            lastDir: { x: 1, y: 0 },
+            dashDistance: 180,
+            dashCooldown: 600,
+            cooldownTimer: 0,
+
 
             sprite: this.playerShipSprite,
             pencil: pencil,
-        //ship draw
+            //ship draw
             draw: () => {
                 pencil.drawImage(
                     this.playerShip.sprite,
@@ -47,18 +55,74 @@ export class Level1 {
                     this.playerShip.height
                 );
             },
-        //ship move function
+            //ship move function
             move: () => {
                 let keys = this.keysPressed;
                 let ship = this.playerShip;
 
-                if (keys[ship.upKey]) ship.y -= ship.speed;
-                if (keys[ship.downKey]) ship.y += ship.speed;
-                if (keys[ship.leftKey]) ship.x -= ship.speed;
-                if (keys[ship.rightKey]) ship.x += ship.speed;
-            }
-        };
+                let moved = false;
 
+                if (keys[ship.upKey]) {
+                    ship.y -= ship.speed;
+                    ship.lastDir.y = -1;
+                    ship.lastDir.x = 0;
+                    moved = true;
+                }
+                if (keys[ship.downKey]) {
+                    ship.y += ship.speed;
+                    ship.lastDir.y = 1;
+                    ship.lastDir.x = 0;
+                    moved = true;
+                }
+                if (keys[ship.leftKey]) {
+                    ship.x -= ship.speed;
+                    ship.lastDir.x = -1;
+                    ship.lastDir.y = 0;
+                    moved = true;
+                }
+                if (keys[ship.rightKey]) {
+                    ship.x += ship.speed;
+                    ship.lastDir.x = 1;
+                    ship.lastDir.y = 0;
+                    moved = true;
+                }
+            },
+
+            //ship dash function
+            dash: () => {
+                let ship = this.playerShip;
+                let keys = this.keysPressed;
+
+                // Cooldown ticking
+                if (ship.cooldownTimer > 0) {
+                    ship.cooldownTimer -= 16;
+                    return;
+                }
+
+                // If Shift is not pressed, do nothing
+                if (!keys[ship.dashKey]) return;
+
+                // Dash direction: always use lastDir
+                let dx = ship.lastDir.x;
+                let dy = ship.lastDir.y;
+
+                // Safety: if somehow both are 0, dash forward
+                if (dx === 0 && dy === 0) dx = 1;
+
+                // Normalize
+                let len = Math.hypot(dx, dy);
+                dx /= len;
+                dy /= len;
+
+                // *** INSTANT DASH ***
+                ship.x += dx * ship.dashDistance;
+                ship.y += dy * ship.dashDistance;
+
+                // Start cooldown
+                ship.cooldownTimer = ship.dashCooldown;
+            }
+        }
+    
         //laser object
         this.laser = {
             x: this.playerShip.x + this.playerShip.width,
@@ -111,7 +175,7 @@ export class Level1 {
         
         
         //starts missile spawning below once cause in constructor
-        this.spawnMissileInterval(this.missileCount, 5000)
+        this.spawnMissileInterval(this.missileCount, 2500)
     }
     
     //check laser and missile colliding function
@@ -123,6 +187,17 @@ export class Level1 {
             laser.y + laser.height > missile.y
         );
     }
+
+    //check ship and missile colliding function
+    checkShipMissileCollision(playerShip, missile) {
+        return (
+            playerShip.x < missile.x + missile.width &&
+            playerShip.x + playerShip.width > missile.x &&
+            playerShip.y < missile.y + missile.height &&
+            playerShip.y + playerShip.height > missile.y
+        );
+    }
+
     //missileSpawns function
         spawnMissileInterval(missileCount, intervalMilliseconds) {
             let currentCount = 0;
@@ -138,12 +213,15 @@ export class Level1 {
                 }
             }, intervalMilliseconds);
         }
+
     //Lives system
     playerLives = 3;
+
     //Invincibility Frames on Miss or Hit
     iFrame = false;
     iFrameTimer = 0;
     iFrameDuration = 2000;
+
     //IFrame start
     startIFrame(){
         this.iFrame = true;
@@ -168,6 +246,7 @@ export class Level1 {
     update() {
         //Update ship
         this.playerShip.move();
+        this.playerShip.dash();
         //Draw also handles i frame to create blink effect
         // Handle invincibility frames
         if (this.iFrame) {
@@ -206,6 +285,13 @@ export class Level1 {
             if (this.checkLaserMissileCollision(this.laser, m)) {
                 console.log("missile hit!")
                 m.explode();
+            }
+            if (this.checkShipMissileCollision(this.playerShip, m)) {
+                if (!this.iFrame){
+                this.playerLives --;
+                this.startIFrame();
+                }
+                m.isLive = false
             }
         });
 
