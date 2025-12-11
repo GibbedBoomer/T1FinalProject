@@ -96,7 +96,7 @@ export class Level1 {
             //ship dash function
             dash: () => {
                 let ship = this.playerShip;
-                let keys = this.keysPressed;
+                let dashKeys = this.keysPressed;
 
                 // Cooldown ticking
                 if (ship.cooldownTimer > 0) {
@@ -105,7 +105,7 @@ export class Level1 {
                 }
 
                 // If Shift is not pressed, do nothing
-                if (!keys[ship.dashKey]) return;
+                if (!dashKeys[ship.dashKey]) return;
 
                 // Dash direction: always use lastDir
                 let dx = ship.lastDir.x;
