@@ -14,44 +14,50 @@ export class WinScreen {
     pressAnyTimerStarted = false;
     pressAnyVisible = false;
 
+    bufferPassed = false;
+
     constructor(canvas, pencil) {
         this.canvas = canvas;
         this.pencil = pencil;
 
         this.onKeyPressed = this.onKeyPressed.bind(this);
 
+
+        document.addEventListener("keypress", this.onKeyPressed);
+
+        // start buffer timer
         setTimeout(() => {
             this.bufferOff();
         }, 5000);
     }
 
-    bufferPassed = false;
-
+    // buffer unlock after 5s
     bufferOff() {
         this.bufferPassed = true;
     }
 
+    // handle keypress safely
     onKeyPressed() {
+        if (!this.bufferPassed) return; 
         this.changeToGame = true;
     }
 
     update() {
+        // draw win background
         this.pencil.drawImage(
             this.winScreen,
             0,
             0
         );
 
-        if(this.bufferPassed) {
-            document.addEventListener("keypress", this.onKeyPressed);
-        }
-        
+
         if (!this.pressAnyTimerStarted) {
             this.pressAnyTimerStarted = true;
             setTimeout(() => {
                 this.pressAnyVisible = true;
             }, 3000);
         }
+
 
         if (this.pressAnyVisible) {
             this.pencil.drawImage(
@@ -61,10 +67,10 @@ export class WinScreen {
             );
         }
 
+
         if (this.changeToGame) {
             return "title";
         }
-
     }
 
 }

@@ -14,24 +14,32 @@ export class GameOver {
     pressAnyTimerStarted = false;
     pressAnyVisible = false;
 
+    bufferPassed = false;
+
     constructor(canvas, pencil) {
         this.canvas = canvas;
         this.pencil = pencil;
 
+        
         this.onKeyPressed = this.onKeyPressed.bind(this);
 
+        // add listener
+        document.addEventListener("keypress", this.onKeyPressed);
+
+        // start buffer timer
         setTimeout(() => {
             this.bufferOff();
         }, 5000);
     }
 
-    bufferPassed = false;
-
+    // buffer unlock after 5s
     bufferOff() {
         this.bufferPassed = true;
     }
 
+    // handle keypress
     onKeyPressed() {
+        if (!this.bufferPassed) return; // ignore early presses
         this.changeToGame = true;
     }
 
@@ -42,10 +50,7 @@ export class GameOver {
             0
         );
 
-        if(this.bufferPassed) {
-            document.addEventListener("keypress", this.onKeyPressed);
-        }
-        
+        // start "Press Any Key" timer once
         if (!this.pressAnyTimerStarted) {
             this.pressAnyTimerStarted = true;
             setTimeout(() => {
@@ -53,6 +58,7 @@ export class GameOver {
             }, 3000);
         }
 
+        // draw blinking text
         if (this.pressAnyVisible) {
             this.pencil.drawImage(
                 this.PressAny,
@@ -61,10 +67,10 @@ export class GameOver {
             );
         }
 
+        // if key pressed after buffer, return to title
         if (this.changeToGame) {
             return "title";
         }
-
     }
 
 }

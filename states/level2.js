@@ -114,11 +114,6 @@ export class Level2 {
                 // Safety: if somehow both are 0, dash forward
                 if (dx === 0 && dy === 0) dx = 1;
 
-                // Normalize
-                let len = Math.hypot(dx, dy);
-                dx /= len;
-                dy /= len;
-
                 // *** INSTANT DASH ***
                 ship.x += dx * ship.dashDistance;
                 ship.y += dy * ship.dashDistance;
