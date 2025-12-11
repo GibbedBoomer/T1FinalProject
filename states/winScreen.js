@@ -1,6 +1,6 @@
 import { Toolbox } from "../toolbox.js";
 
-export class GameOver {
+export class WinScreen {
     canvas;
     pencil;
     
@@ -8,7 +8,7 @@ export class GameOver {
 
     toolbox = new Toolbox();
 
-    gameOverScreen = document.getElementById("gameOver");
+    winScreen = document.getElementById("winScreen");
     PressAny = document.getElementById("blinkingPressAnyKey");
 
     pressAnyTimerStarted = false;
@@ -37,7 +37,7 @@ export class GameOver {
 
     update() {
         this.pencil.drawImage(
-            this.gameOverScreen,
+            this.winScreen,
             0,
             0
         );

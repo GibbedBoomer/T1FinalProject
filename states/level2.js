@@ -1,7 +1,7 @@
 import { Toolbox } from "../toolbox.js";
 import { Missile } from "../missile.js";
 
-export class Level1 {
+export class Level2 {
     //setting up variables
     canvas;
     pencil;
@@ -14,7 +14,7 @@ export class Level1 {
     lifeShip = document.getElementById("lifeShip")
     
     //missileCount basically sets level difficulty along with speed passed in spawn function
-    missileCount = 10;
+    missileCount = 25;
     missiles = [];
 
     
@@ -23,7 +23,7 @@ export class Level1 {
         this.pencil = pencil;
 
         //background
-        this.bg = document.getElementById("backgroundL1");
+        this.bg = document.getElementById("backgroundL2");
         this.bgX = 0;
         this.scrollSpeed = 30;
 
@@ -180,7 +180,10 @@ export class Level1 {
         
         
         //starts missile spawning below once cause in constructor
-        this.spawnMissileInterval(this.missileCount, 2500)
+        setTimeout(() => {
+            this.spawnMissileInterval(this.missileCount, 1000)
+        }, 6000);
+        
     }
     
     //check laser and missile colliding function
@@ -215,7 +218,7 @@ export class Level1 {
 
             const intervalId = setInterval(() => {
                 if (currentCount < missileCount) {
-                    const newMissile = new Missile(this.canvas, this.pencil, 5);
+                    const newMissile = new Missile(this.canvas, this.pencil, 10);
                     this.missiles.push(newMissile);
                     currentCount++;
                 } else {
@@ -335,7 +338,7 @@ export class Level1 {
 
         //endLevel
         if(this.endLevel === true){
-            return "level2"
+            return "level3"
         }
     }   
 }
